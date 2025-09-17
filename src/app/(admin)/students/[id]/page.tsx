@@ -1,3 +1,4 @@
+// src/app/student/[id]/page.tsx
 "use client";
 
 import { useParams } from "next/navigation";
@@ -17,6 +18,7 @@ import {
   FaSchool,
   FaStar,
   FaPenNib,
+  FaIdCard,
 } from "react-icons/fa";
 
 export default function StudentDetail() {
@@ -58,6 +60,12 @@ export default function StudentDetail() {
     );
   };
 
+  // Helper function to format date from YYYY-MM-DD
+  const formatDate = (dateString: string) => {
+    const [year, month, day] = dateString.split("-");
+    return `${parseInt(day)}/${parseInt(month)}/${parseInt(year) + 543}`;
+  };
+
   return (
     <main className="p-4 md:p-8 bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto space-y-12">
@@ -96,7 +104,9 @@ export default function StudentDetail() {
                   {student.fnameEN} {student.lnameEN}
                 </p>
                 <div className="mt-6 flex flex-wrap justify-center gap-3">
-                  <Badge text={`GPA: ${student.gpa}`} color="blue" />
+                  {student.gpa && (
+                    <Badge text={`GPA: ${student.gpa}`} color="blue" />
+                  )}
                 </div>
               </div>
             </div>
@@ -149,19 +159,24 @@ export default function StudentDetail() {
               <InfoGrid
                 data={[
                   {
+                    icon: <FaIdCard />,
+                    label: "เลขบัตรประชาชน",
+                    value: student.idCard,
+                  },
+                  {
                     icon: <FaBirthdayCake />,
                     label: "วันเกิด",
-                    value: student.birthDate,
+                    value: formatDate(student.birthDate),
                   },
                   {
                     icon: <FaWeight />,
                     label: "น้ำหนัก",
-                    value: `${student.weight} kg`,
+                    value: student.weight ? `${student.weight} kg` : "ไม่ระบุ",
                   },
                   {
                     icon: <FaRulerVertical />,
                     label: "ส่วนสูง",
-                    value: `${student.height} cm`,
+                    value: student.height ? `${student.height} cm` : "ไม่ระบุ",
                   },
                   {
                     icon: <FaPhone />,
@@ -171,7 +186,7 @@ export default function StudentDetail() {
                   {
                     icon: <FaEnvelope />,
                     label: "Email",
-                    value: student.email,
+                    value: student.email ? student.email : "ไม่ระบุ",
                   },
                 ]}
               />

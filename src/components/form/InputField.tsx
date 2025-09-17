@@ -1,5 +1,4 @@
 // src/components/form/InputField.tsx
-
 import { IconType } from 'react-icons';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { InputHTMLAttributes } from 'react';
@@ -37,7 +36,8 @@ export const InputField = ({
         type={type}
         placeholder={placeholder}
         className="input-base"
-        {...register(id, { valueAsNumber: type === "number" })} // แก้ไขส่วนนี้
+        // ส่วนนี้คือการแก้ไขที่สำคัญ
+        {...register(id)} 
         {...rest}
       />
       {error && <p className="text-red-500 text-sm mt-1">{error.message as string}</p>}

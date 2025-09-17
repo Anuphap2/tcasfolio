@@ -10,12 +10,12 @@ export type Info = {
   birthDate: string;
   email: string;
   tel: string;
-  weight: number;
-  height: number;
+  weight: number | null; // เปลี่ยนให้ยอมรับค่า null ได้
+  height: number | null; // เปลี่ยนให้ยอมรับค่า null ได้
+  gpa: number | null;   // เปลี่ยนให้ยอมรับค่า null ได้
   gender: string;
   address: string;
   oldSchool: string;
-  gpa: number;
   skill: string;
   reason: string;
   faculty: string;

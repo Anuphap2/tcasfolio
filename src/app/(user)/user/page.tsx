@@ -1,7 +1,6 @@
 // src/app/page.tsx
-
 "use client";
-import { useForm } from "react-hook-form";
+import { useForm, FieldErrors } from "react-hook-form";
 import { useState } from "react";
 import Image from "next/image";
 import { useStudentStore } from "@/store/useStudentStore";
@@ -20,6 +19,7 @@ import {
   FaSchool,
   FaStar,
   FaLightbulb,
+  FaEnvelope, // เพิ่ม FaEnvelope
 } from "react-icons/fa";
 // Import Components
 import { InputField } from "@/components/form/InputField";
@@ -41,20 +41,20 @@ export default function Home() {
   } = useForm<InfoFormData>({
     resolver: zodResolver(infoSchema),
     defaultValues: {
-      fnameTH: "พู่กัน",
-      lnameTH: "โปรแกรมเมอร์",
-      fnameEN: "Pookan",
-      lnameEN: "Programmer",
-      idCard: "1234567890123",
-      birthDate: "2000-01-01",
-      email: "pookan@example.com",
-      tel: "0812345678",
-      weight: 0,
-      height: 0,
+      fnameTH: "",
+      lnameTH: "",
+      fnameEN: "",
+      lnameEN: "",
+      idCard: "",
+      birthDate: "",
+      tel: "",
+      email: "", // เพิ่ม default value
+      weight: null,
+      height: null,
+      gpa: null,
       gender: "",
       address: "",
       oldSchool: "",
-      gpa: 0,
       skill: "",
       reason: "",
       imgSrc: [],
@@ -64,17 +64,26 @@ export default function Home() {
   });
 
   const onSubmit = (data: InfoFormData) => {
+    // โค้ดส่วนนี้จะทำงานเมื่อฟอร์มถูกต้องแล้ว
     const studentData = {
       ...data,
       id: Date.now().toString(),
       imgSrc: data.imgSrc || [],
       imgActivity: data.imgActivity || [],
       imgAward: data.imgAward || [],
+      // แปลงค่า null/undefined ให้เป็น 0 ก่อนส่ง
+      weight: data.weight || 0,
+      height: data.height || 0,
+      gpa: data.gpa || 0,
     };
     addStudent(studentData);
-    setToast("บันทึกข้อมูลเรียบร้อยแล้ว");
-    setTimeout(() => setToast(null), 3000);
+    setToast("บันทึกข้อมูลเรียบร้อย!");
+    setTimeout(() => setToast(null), 3000); // ซ่อน toast หลัง 3 วินาที
     reset();
+  };
+  const onInvalid = (errors: FieldErrors<InfoFormData>) => {
+    // โค้ดส่วนนี้จะทำงานเมื่อฟอร์มมีข้อผิดพลาด
+    console.log("ข้อผิดพลาดในฟอร์ม:", errors);
   };
 
   return (
@@ -118,7 +127,7 @@ export default function Home() {
       </div>
 
       <form
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={handleSubmit(onSubmit, onInvalid)}
         className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl p-8 md:p-12 space-y-10 animate-fadeInUp"
       >
         {/* === ข้อมูลส่วนตัว === */}
@@ -128,7 +137,7 @@ export default function Home() {
             <InputField
               id="fnameTH"
               label="ชื่อ (ไทย)"
-              placeholder="พู่กัน"
+              placeholder="ชื่อ"
               icon={FaUser}
               register={register}
               errors={errors}
@@ -136,7 +145,7 @@ export default function Home() {
             <InputField
               id="lnameTH"
               label="นามสกุล (ไทย)"
-              placeholder="โปรแกรมเมอร์"
+              placeholder="นามสกุล"
               icon={FaUser}
               register={register}
               errors={errors}
@@ -144,7 +153,7 @@ export default function Home() {
             <InputField
               id="fnameEN"
               label="ชื่อ (อังกฤษ)"
-              placeholder="Pookan"
+              placeholder="ชื่อ"
               icon={FaUser}
               register={register}
               errors={errors}
@@ -152,7 +161,7 @@ export default function Home() {
             <InputField
               id="lnameEN"
               label="นามสกุล (อังกฤษ)"
-              placeholder="Programmer"
+              placeholder="นามสกุล"
               icon={FaUser}
               register={register}
               errors={errors}
@@ -183,6 +192,16 @@ export default function Home() {
               register={register}
               errors={errors}
             />
+          </div>
+          <div className="mt-8"> {/* เพิ่ม div เพื่อจัดระเบียบ */}
+              <InputField
+                id="email"
+                label="อีเมล"
+                placeholder="your.email@example.com"
+                icon={FaEnvelope} // ใช้ FaEnvelope
+                register={register}
+                errors={errors}
+              />
           </div>
         </section>
 
