@@ -10,7 +10,7 @@ import {
   FaSortNumericDown,
   FaSortNumericUp,
   FaEye,
-  FaTrashAlt
+  FaTrashAlt,
 } from "react-icons/fa";
 
 export default function AdminDashboard() {
@@ -40,7 +40,7 @@ export default function AdminDashboard() {
         const nameB = b.fnameTH + b.lnameTH;
         return asc ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
       } else {
-        return asc ? a.gpa - b.gpa : b.gpa - a.gpa;
+        return asc ? (a.gpa ?? 0) - (b.gpa ?? 0) : (b.gpa ?? 0) - (a.gpa ?? 0);
       }
     });
     setSortedStudents(sorted);
@@ -156,7 +156,9 @@ export default function AdminDashboard() {
                   <th className="px-6 py-4 text-left font-semibold">
                     มหาวิทยาลัย
                   </th>
-                  <th className="px-6 py-4 text-center font-semibold">Actions</th>
+                  <th className="px-6 py-4 text-center font-semibold">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
