@@ -1,103 +1,153 @@
+"use client";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { FaEnvelope, FaLock } from "react-icons/fa";
+
+const loginSchema = z.object({
+  email: z.string().email("กรุณากรอกอีเมลที่ถูกต้อง"),
+  password: z.string().min(6, "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"),
+});
+
+type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [toast, setToast] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  const onSubmit = (data: LoginFormData) => {
+    setIsLoading(true);
+    console.log("Login data:", data);
+
+    setTimeout(() => {
+      setToast("เข้าสู่ระบบสำเร็จ!");
+      router.push("/user");
+      setIsLoading(false);
+      reset();
+      setTimeout(() => {
+        setToast(null);
+      }, 3000);
+    }, 1500);
+  };
+
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-6 md:p-12 font-sans">
+      {toast && (
+        <div className="fixed bottom-6 right-6 flex items-center gap-3 bg-green-500 text-white px-6 py-3 rounded-full shadow-2xl border-l-4 border-green-700 animate-slide-in-right z-50">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 flex-shrink-0"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 13l4 4L19 7"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+          </svg>
+          <span className="font-semibold text-sm md:text-base">{toast}</span>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+      )}
+
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8 md:p-12 space-y-8 animate-fadeInUp">
+        <div className="flex flex-col items-center">
           <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+            src="/assets/logo.png"
+            alt="TCAS Icon"
+            width={200}
+            height={200}
+            className="mb-4"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-blue-800 tracking-wide text-center">
+            เข้าสู่ระบบ
+          </h1>
+          <p className="text-lg text-gray-600 mt-2 text-center">
+            เพื่อเข้าสู่ TCAS Portfolio
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          {/* Email Field with Icon */}
+          <div className="flex flex-col">
+            <label className="font-semibold text-gray-700 mb-2">อีเมล</label>
+            <div className="relative">
+              <span className="absolute inset-y-0 right-2 flex items-center pl-3 text-gray-400">
+                <FaEnvelope className="h-5 w-5" />
+              </span>
+              <input
+                {...register("email")}
+                type="email"
+                placeholder="youremail@example.com"
+                className="input-base pl-10"
+              />
+            </div>
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          {/* Password Field with Icon */}
+          <div className="flex flex-col">
+            <label className="font-semibold text-gray-700 mb-2">รหัสผ่าน</label>
+            <div className="relative">
+              <span className="absolute inset-y-0 right-2 flex items-center pl-3 text-gray-400">
+                <FaLock className="h-5 w-5" />
+              </span>
+              <input
+                {...register("password")}
+                type="password"
+                placeholder="รหัสผ่าน"
+                className="input-base pl-10"
+              />
+            </div>
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+         
+
+          {/* Submit Button with Loading State */}
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="cursor-pointer w-full py-3 bg-blue-600 text-white rounded-full font-bold text-lg shadow-xl hover:bg-blue-700 transition-all duration-300 ease-in-out transform hover:scale-105 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          >
+            {isLoading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
+          </button>
+        </form>
+
+        {/* Links to other pages */}
+        <div className="text-center text-gray-600">
+       
+          <p className="mt-2">
+            <Link href="/dashboard" className="text-blue-600 hover:underline">
+              หน้าสำหรับอาจารย์ &rarr;
+            </Link>
+          </p>
+        </div>
+      </div>
+    </main>
   );
 }
