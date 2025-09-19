@@ -1,4 +1,3 @@
-// src/app/page.tsx
 "use client";
 import { useForm, FieldErrors } from "react-hook-form";
 import { useState } from "react";
@@ -19,7 +18,7 @@ import {
   FaSchool,
   FaStar,
   FaLightbulb,
-  FaEnvelope, // เพิ่ม FaEnvelope
+  FaEnvelope,
 } from "react-icons/fa";
 // Import Components
 import { InputField } from "@/components/form/InputField";
@@ -31,6 +30,66 @@ type InfoFormData = z.infer<typeof infoSchema>;
 export default function Home() {
   const { addStudent } = useStudentStore();
   const [toast, setToast] = useState<string | null>(null);
+
+  // สร้าง state สำหรับ previews ของรูปภาพแต่ละชนิด
+  const [profilePreviews, setProfilePreviews] = useState<string[]>([]);
+  const [activityPreviews, setActivityPreviews] = useState<string[]>([]);
+  const [awardPreviews, setAwardPreviews] = useState<string[]>([]);
+
+  // สร้าง state สำหรับเก็บค่าคณะที่เลือก เพื่อควบคุม Dropdown ของสาขา
+  const [selectedFaculty, setSelectedFaculty] = useState<string>("");
+
+  const facultyDepartments: Record<string, string[]> = {
+    วิศวกรรมศาสตร์: [
+      "วิศวกรรมคอมพิวเตอร์",
+      "วิศวกรรมโยธา",
+      "วิศวกรรมเครื่องกล",
+      "วิศวกรรมไฟฟ้า",
+      "วิศวกรรมเคมี",
+      "วิศวกรรมสิ่งแวดล้อม",
+    ],
+    วิทยาศาสตร์: [
+      "วิทยาการคอมพิวเตอร์",
+      "ฟิสิกส์",
+      "เคมี",
+      "ชีววิทยา",
+      "คณิตศาสตร์",
+      "สถิติ",
+      "เทคโนโลยีชีวภาพ",
+    ],
+    สถาปัตยกรรมศาสตร์: [
+      "สถาปัตยกรรม",
+      "สถาปัตยกรรมภายใน",
+      "ภูมิสถาปัตยกรรม",
+      "การออกแบบอุตสาหกรรม",
+    ],
+    เกษตรศาสตร์: ["พืชสวน", "สัตวบาล", "ส่งเสริมและนิเทศศาสตร์เกษตร"],
+    แพทยศาสตร์: ["แพทยศาสตร์"],
+    ทันตแพทยศาสตร์: ["ทันตแพทยศาสตร์"],
+    เภสัชศาสตร์: ["เภสัชศาสตร์"],
+    พยาบาลศาสตร์: ["พยาบาลศาสตร์"],
+    สหเวชศาสตร์: ["กายภาพบำบัด", "เทคนิคการแพทย์"],
+    สัตวแพทยศาสตร์: ["สัตวแพทยศาสตร์"],
+    "อักษรศาสตร์/ศิลปศาสตร์/มนุษยศาสตร์": [
+      "ภาษาอังกฤษ",
+      "ภาษาจีน",
+      "ภาษาญี่ปุ่น",
+      "ประวัติศาสตร์",
+      "ปรัชญา",
+    ],
+    นิติศาสตร์: ["นิติศาสตร์"],
+    รัฐศาสตร์: ["รัฐประศาสนศาสตร์", "การระหว่างประเทศ"],
+    เศรษฐศาสตร์: ["เศรษฐศาสตร์"],
+    "บริหารธุรกิจ/พาณิชยศาสตร์และการบัญชี": [
+      "การบัญชี",
+      "การเงิน",
+      "การตลาด",
+      "การจัดการ",
+    ],
+    นิเทศศาสตร์: ["การโฆษณา", "ภาพยนตร์และวิดีโอ", "วารสารศาสตร์"],
+    "ครุศาสตร์/ศึกษาศาสตร์": ["การศึกษาปฐมวัย", "มัธยมศึกษา"],
+    ศิลปกรรมศาสตร์: ["ทัศนศิลป์", "ดนตรี", "นาฏศิลป์"],
+  };
 
   const {
     register,
@@ -48,7 +107,7 @@ export default function Home() {
       idCard: "",
       birthDate: "",
       tel: "",
-      email: "", // เพิ่ม default value
+      email: "",
       weight: null,
       height: null,
       gpa: null,
@@ -57,6 +116,9 @@ export default function Home() {
       oldSchool: "",
       skill: "",
       reason: "",
+      faculty: "",
+      department: "",
+      university: "",
       imgSrc: [],
       imgActivity: [],
       imgAward: [],
@@ -64,31 +126,35 @@ export default function Home() {
   });
 
   const onSubmit = (data: InfoFormData) => {
-    // โค้ดส่วนนี้จะทำงานเมื่อฟอร์มถูกต้องแล้ว
     const studentData = {
       ...data,
       id: Date.now().toString(),
       imgSrc: data.imgSrc || [],
       imgActivity: data.imgActivity || [],
       imgAward: data.imgAward || [],
-      // แปลงค่า null/undefined ให้เป็น 0 ก่อนส่ง
       weight: data.weight || 0,
       height: data.height || 0,
       gpa: data.gpa || 0,
     };
     addStudent(studentData);
     setToast("บันทึกข้อมูลเรียบร้อย!");
-    setTimeout(() => setToast(null), 3000); // ซ่อน toast หลัง 3 วินาที
+    setTimeout(() => setToast(null), 3000);
+
+    // ล้างค่าใน react-hook-form
     reset();
+
+    // ล้างค่า previews ใน state ของแต่ละ component ด้วย
+    setProfilePreviews([]);
+    setActivityPreviews([]);
+    setAwardPreviews([]);
   };
+
   const onInvalid = (errors: FieldErrors<InfoFormData>) => {
-    // โค้ดส่วนนี้จะทำงานเมื่อฟอร์มมีข้อผิดพลาด
     console.log("ข้อผิดพลาดในฟอร์ม:", errors);
   };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-start bg-gradient-to-br from-gray-100 to-gray-200 p-6 md:p-12 font-sans">
-      {/* Toast - แจ้งเตือนความสำเร็จ */}
       {toast && (
         <div className="fixed bottom-6 right-6 flex items-center gap-3 bg-green-500 text-white px-6 py-3 rounded-full shadow-2xl border-l-4 border-green-700 animate-slide-in-right z-50">
           <svg
@@ -109,7 +175,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* Hero Section with Logo */}
       <div className="flex flex-col items-center mb-10 text-center">
         <Image
           src="/assets/logo.png"
@@ -193,15 +258,15 @@ export default function Home() {
               errors={errors}
             />
           </div>
-          <div className="mt-8"> {/* เพิ่ม div เพื่อจัดระเบียบ */}
-              <InputField
-                id="email"
-                label="อีเมล"
-                placeholder="your.email@example.com"
-                icon={FaEnvelope} // ใช้ FaEnvelope
-                register={register}
-                errors={errors}
-              />
+          <div className="mt-8">
+            <InputField
+              id="email"
+              label="อีเมล"
+              placeholder="your.email@example.com"
+              icon={FaEnvelope}
+              register={register}
+              errors={errors}
+            />
           </div>
         </section>
 
@@ -239,10 +304,11 @@ export default function Home() {
                 {...register("gender")}
                 className="input-base"
               >
-                <option value="">เลือกเพศ</option>
+                <option disabled value="">
+                  เลือกเพศ
+                </option>
                 <option value="ชาย">ชาย</option>
                 <option value="หญิง">หญิง</option>
-                <option value="อื่น ๆ">อื่น ๆ</option>
               </select>
               {errors.gender && (
                 <p className="text-red-500 text-sm mt-1">
@@ -308,11 +374,24 @@ export default function Home() {
                 id="faculty"
                 {...register("faculty")}
                 className="input-base"
+                // เพิ่ม onChange เพื่อจัดการกับค่าที่เลือก
+                onChange={(e) => {
+                  const selectedValue = e.target.value;
+                  // อัปเดตค่าใน react-hook-form และ state
+                  setValue("faculty", selectedValue, { shouldValidate: true });
+                  setSelectedFaculty(selectedValue);
+                  // ล้างค่าสาขาเมื่อมีการเปลี่ยนคณะ
+                  setValue("department", "");
+                }}
               >
-                <option value="">เลือกคณะ</option>
-                <option value="วิศวกรรมศาสตร์">วิศวกรรมศาสตร์</option>
-                <option value="วิทยาศาสตร์">วิทยาศาสตร์</option>
-                <option value="ศิลปศาสตร์">ศิลปศาสตร์</option>
+                <option disabled value="">
+                  เลือกคณะ
+                </option>
+                {Object.keys(facultyDepartments).map((faculty) => (
+                  <option key={faculty} value={faculty}>
+                    {faculty}
+                  </option>
+                ))}
               </select>
               {errors.faculty && (
                 <p className="text-red-500 text-sm mt-1">
@@ -330,13 +409,23 @@ export default function Home() {
               <select
                 id="department"
                 {...register("department")}
-                className="input-base"
+                className={
+                  !selectedFaculty
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed input-base"
+                    : "input-base"
+                }
+                disabled={!selectedFaculty}
               >
-                <option value="">เลือกสาขา</option>
-                <option value="คอมพิวเตอร์">คอมพิวเตอร์</option>
-                <option value="เคมี">เคมี</option>
-                <option value="ฟิสิกส์">ฟิสิกส์</option>
-                <option value="ภาษาอังกฤษ">ภาษาอังกฤษ</option>
+                <option disabled value="">
+                  เลือกสาขา
+                </option>
+                {/* แสดงเฉพาะสาขาที่เกี่ยวข้องกับคณะที่เลือก */}
+                {selectedFaculty &&
+                  facultyDepartments[selectedFaculty]?.map((dept) => (
+                    <option key={dept} value={dept}>
+                      {dept}
+                    </option>
+                  ))}
               </select>
               {errors.department && (
                 <p className="text-red-500 text-sm mt-1">
@@ -356,10 +445,24 @@ export default function Home() {
                 {...register("university")}
                 className="input-base"
               >
-                <option value="">เลือกมหาวิทยาลัย</option>
-                <option value="จุฬา">จุฬา</option>
-                <option value="มหิดล">มหิดล</option>
-                <option value="มหาสารคาม">มหาสารคาม</option>
+                <option disabled value="">
+                  เลือกมหาวิทยาลัย
+                </option>
+                <option value="มหาวิทยาลัยเชียงใหม่">
+                  มหาวิทยาลัยเชียงใหม่
+                </option>
+                <option value="มหาวิทยาลัยแม่โจ้">มหาวิทยาลัยแม่โจ้</option>
+                <option value="มหาวิทยาลัยนเรศวร">มหาวิทยาลัยนเรศวร</option>
+                <option value="มหาวิทยาลัยพะเยา">มหาวิทยาลัยพะเยา</option>
+                <option value="มหาวิทยาลัยราชภัฏเชียงใหม่">
+                  มหาวิทยาลัยราชภัฏเชียงใหม่
+                </option>
+                <option value="มหาวิทยาลัยราชภัฏลำปาง">
+                  มหาวิทยาลัยราชภัฏลำปาง
+                </option>
+                <option value="มหาวิทยาลัยเทคโนโลยีราชมงคลล้านนา">
+                  มหาวิทยาลัยเทคโนโลยีราชมงคลล้านนา
+                </option>
               </select>
               {errors.university && (
                 <p className="text-red-500 text-sm mt-1">
@@ -402,6 +505,9 @@ export default function Home() {
               label="รูปโปรไฟล์"
               setValue={setValue}
               errors={errors}
+              // ส่ง state และ set state เข้าไป
+              previews={profilePreviews}
+              setPreviews={setProfilePreviews}
             />
             <ImageUploader
               id="imgActivity"
@@ -409,6 +515,9 @@ export default function Home() {
               multiple
               setValue={setValue}
               errors={errors}
+              // ส่ง state และ set state เข้าไป
+              previews={activityPreviews}
+              setPreviews={setActivityPreviews}
             />
             <ImageUploader
               id="imgAward"
@@ -416,6 +525,9 @@ export default function Home() {
               multiple
               setValue={setValue}
               errors={errors}
+              // ส่ง state และ set state เข้าไป
+              previews={awardPreviews}
+              setPreviews={setAwardPreviews}
             />
           </div>
         </section>

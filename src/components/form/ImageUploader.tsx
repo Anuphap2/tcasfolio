@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import { FieldErrors, UseFormSetValue } from 'react-hook-form';
-import { InfoFormData } from "@/types"; // ตรวจสอบเส้นทาง import ให้ถูกต้อง
-import { useState } from "react";
+import { InfoFormData } from "@/types";
 
 // กำหนด Type ของ id ให้ชัดเจนว่าเป็นเพียงแค่ key ที่มีค่าเป็น string[]
 type ImageFieldKeys = 'imgSrc' | 'imgActivity' | 'imgAward';
@@ -14,6 +13,9 @@ interface ImageUploaderProps {
   multiple?: boolean;
   setValue: UseFormSetValue<InfoFormData>;
   errors: FieldErrors<InfoFormData>;
+  // เพิ่มพร็อพ setPreviews เข้ามา
+  previews: string[];
+  setPreviews: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const readFileAsDataURL = (file: File) =>
@@ -24,8 +26,7 @@ const readFileAsDataURL = (file: File) =>
     reader.readAsDataURL(file);
   });
 
-export const ImageUploader = ({ id, label, multiple = false, setValue, errors }: ImageUploaderProps) => {
-  const [previews, setPreviews] = useState<string[]>([]);
+export const ImageUploader = ({ id, label, multiple = false, setValue, errors, previews, setPreviews }: ImageUploaderProps) => {
   const error = errors[id];
   const isProfile = id === "imgSrc";
 
@@ -37,7 +38,6 @@ export const ImageUploader = ({ id, label, multiple = false, setValue, errors }:
       Array.from(files).map(readFileAsDataURL)
     );
     setPreviews(urls);
-    // ตอนนี้ TypeScript รู้แล้วว่า id จะมี Type ที่สอดคล้องกับ urls
     setValue(id, urls, { shouldValidate: true });
   };
 

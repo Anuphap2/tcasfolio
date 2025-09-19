@@ -24,7 +24,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased bg-gray-100 min-h-screen flex flex-col`}
     >
       {/* Navbar */}
-      <header className="bg-white text-gray-800 p-4 md:p-6 shadow-lg border-b border-gray-200 sticky top-0 z-50 animate-fadeInDown">
+      <nav className="bg-white text-gray-800 p-4 md:p-6 shadow-lg border-b border-gray-200 sticky top-0 z-50 animate-fadeInDown">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <h1 className="text-3xl font-extrabold tracking-tight text-blue-800">
             TCASFOLIO
@@ -44,7 +44,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </Link>
           </nav>
         </div>
-      </header>
+      </nav>
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl mx-auto w-full p-6 animate-fadeInUp">

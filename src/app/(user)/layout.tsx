@@ -14,9 +14,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       className={`antialiased bg-gray-50 text-gray-800 min-h-screen flex flex-col`}
     >
       {/* Navbar Header */}
-      <header className="bg-white p-4 md:p-6 shadow-lg border-b border-gray-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <h1 className="text-3xl font-extrabold tracking-tight text-blue-700">
+      <nav className="bg-white p-4 md:p-6 shadow-lg border-b border-gray-100 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto flex flex-row justify-between items-center space-x-4 md:space-x-6">
+          <h1 className="text-xl md:text-3xl font-extrabold tracking-tight text-blue-700">
             TCASFOLIO
           </h1>
           <nav className="flex items-center space-x-4 md:space-x-6">
@@ -28,7 +28,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             </Link>
           </nav>
         </div>
-      </header>
+      </nav>
 
       {/* Main Content with subtle padding and margin */}
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 md:px-6 py-8">

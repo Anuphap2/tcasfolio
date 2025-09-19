@@ -99,7 +99,7 @@ export default function AdminDashboard() {
             <div className="flex gap-2">
               <button
                 onClick={() => handleSort("name")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold transition-colors duration-200 ${
+                className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-full font-semibold transition-colors duration-200 ${
                   sortBy === "name"
                     ? "bg-blue-600 text-white shadow-md"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
               </button>
               <button
                 onClick={() => handleSort("gpa")}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold transition-colors duration-200 ${
+                className={`cursor-pointer flex items-center gap-2 px-4 py-2 rounded-full font-semibold transition-colors duration-200 ${
                   sortBy === "gpa"
                     ? "bg-blue-600 text-white shadow-md"
                     : "bg-gray-200 text-gray-700 hover:bg-gray-300"
@@ -204,14 +204,14 @@ export default function AdminDashboard() {
                         <div className="flex justify-center gap-2">
                           <Link
                             href={`/students/${s.id}`}
-                            className="p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm"
+                            className="cursor-pointer p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors shadow-sm"
                             title="ดูรายละเอียด"
                           >
                             <FaEye className="w-5 h-5" />
                           </Link>
                           <button
                             onClick={() => handleShowDeleteModal(s.id)}
-                            className="p-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors shadow-sm"
+                            className="cursor-pointer p-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors shadow-sm"
                             title="ลบข้อมูล"
                           >
                             <FaTrashAlt className="w-5 h-5" />
